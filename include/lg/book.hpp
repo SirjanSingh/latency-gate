@@ -296,6 +296,8 @@ inline bool apply(Book& book, const itch::Msg& m, uint16_t locate) {
     return false;
   }
   ++book.stats.applied;
+  // DEMO REGRESSION (do not merge): one heap allocation per event on the hot path.
+  { auto* scratch = new std::vector<uint64_t>(16, m.ref); book.stats.applied += (*scratch)[3] == 0; delete scratch; }
   switch (m.type) {
     case MsgType::AddOrder:
     case MsgType::AddOrderMpid:
