@@ -1,0 +1,8 @@
+date: 2026-10-10T21:03:25Z
+commit: dcdbb52
+cpu: 13th Gen Intel(R) Core(TM) i5-13420H
+kernel: 6.18.40.1-microsoft-standard-WSL2 (WSL2 VM on Windows 11; not bare metal)
+compiler: g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+build: CMake Release (-O3 -DNDEBUG), no -march=native
+input: lg-gen --seed 42 --messages 1000000 (synthetic, not exchange traffic); locate 1 = 250,094 applied events
+pinning: sched_setaffinity to cpu 2 (limits migration only; no isolcpus, no IRQ steering)

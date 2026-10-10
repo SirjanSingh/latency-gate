@@ -27,7 +27,7 @@ jobs:
 
       - name: Interleaved benchmark runs
         run: |
-          for i in $(seq 1 10); do
+          for i in $(seq 1 12); do
             ./build-base/lg-bench synth.itch --book flat --run-id $i --cpu 1 --label base --csv base.csv
             ./build-head/lg-bench synth.itch --book flat --run-id $i --cpu 1 --label head --csv head.csv
           done
