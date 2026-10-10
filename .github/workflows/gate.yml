@@ -1,0 +1,45 @@
+name: latency-gate
+
+# Benchmarks the pull request against its base branch on the same runner and fails the check
+# when tail latency regresses by more than the threshold and the noise. Absolute numbers from
+# shared CI runners mean little; only the base/head comparison inside one job is used.
+on:
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build head
+        run: cmake -S . -B build-head -DCMAKE_BUILD_TYPE=Release && cmake --build build-head -j
+
+      - name: Build base
+        run: |
+          git worktree add ../base "origin/${{ github.base_ref }}"
+          cmake -S ../base -B build-base -DCMAKE_BUILD_TYPE=Release && cmake --build build-base -j
+
+      - name: Generate input (same file for both sides)
+        run: ./build-head/lg-gen --seed 42 --messages 1000000 --out synth.itch
+
+      - name: Interleaved benchmark runs
+        run: |
+          for i in $(seq 1 10); do
+            ./build-base/lg-bench synth.itch --book flat --run-id $i --cpu 1 --label base --csv base.csv
+            ./build-head/lg-bench synth.itch --book flat --run-id $i --cpu 1 --label head --csv head.csv
+          done
+
+      - name: Gate
+        run: ./build-head/lg-gate base.csv head.csv --threshold 0.05 --summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep raw results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latency-gate-results
+          path: |
+            base.csv
+            head.csv
