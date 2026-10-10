@@ -318,7 +318,8 @@ inline bool apply(Book& book, const itch::Msg& m, uint16_t locate) {
   return true;
 }
 
-// Default window used by the tools: $80.00 to $119.99 in one-cent ticks (ITCH prices have 4 decimals).
+// Default window used by the tools: $80.00 to $119.99 in one-cent ticks.
+// ITCH prices carry 4 implied decimals, so one cent is 100 price units.
 struct Window {
   uint32_t lo = 800000;
   uint32_t tick = 100;
