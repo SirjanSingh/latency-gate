@@ -37,6 +37,16 @@ The 6-run miss is kept on purpose. On a noisy VM the interval is wide, and a 20 
 regression was not reliably separated from noise with 6 runs per side. With 12 it was, so the
 CI gate uses 12.
 
+The same two cases as real pull requests, judged by the CI gate on a GitHub runner
+(12 interleaved runs per side; the runner's absolute numbers are not meaningful):
+
+| pull request | p99 ratio | 95% CI | p99.9 ratio | 95% CI | check |
+|---|---|---|---|---|---|
+| [#1 heap allocation per event](https://github.com/SirjanSingh/latency-gate/pull/1) | 1.323 | [1.282, 1.364] | 1.357 | [1.293, 1.468] | **failed** |
+| [#2 comment-only change](https://github.com/SirjanSingh/latency-gate/pull/2) | 1.000 | [0.995, 1.009] | 1.039 | [0.993, 1.071] | passed |
+
+Both PRs stay open as the record and are not meant to be merged.
+
 ## How the gate decides
 
 1. `lg-bench` replays the same input and writes one row per run: p50, p90, p99, p99.9, max.
